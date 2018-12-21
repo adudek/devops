@@ -1,5 +1,7 @@
 # TeamCity
-## TeamCity container installation Linux (aws headles)
+
+## TeamCity Server container installation Linux (AWS headles)
+
 ```
 #!/bin/bash
 # install Docker service and run TeamCity server container
