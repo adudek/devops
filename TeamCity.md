@@ -17,7 +17,7 @@ events { }
 
 http {
 
-  map $http_upgrade $connection_upgrade {
+  map \$http_upgrade \$connection_upgrade {
     default upgrade;
     '' '';
   }
@@ -34,14 +34,14 @@ http {
     location / {
     proxy_pass         http://localhost:8111;
 
-    proxy_set_header   Host             $host;
-    proxy_set_header   X-Real-IP        $remote_addr;
-    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+    proxy_set_header   Host             \$host;
+    proxy_set_header   X-Real-IP        \$remote_addr;
+    proxy_set_header   X-Forwarded-For  \$proxy_add_x_forwarded_for;
     proxy_set_header   X-Forwarded-Proto http;
 
-    proxy_set_header   X-Forwarded-Host $http_host;
-    proxy_set_header   Upgrade $http_upgrade;
-    proxy_set_header   Connection $connection_upgrade;
+    proxy_set_header   X-Forwarded-Host \$http_host;
+    proxy_set_header   Upgrade \$http_upgrade;
+    proxy_set_header   Connection \$connection_upgrade;
 
     proxy_max_temp_file_size 0;
 
