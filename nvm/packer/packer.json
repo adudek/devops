@@ -1,0 +1,33 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "eu-central-1",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "amzn2-ami-hvm-*-x86_64-ebs",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "instance_type": "t2.micro",
+    "ssh_username": "ec2-user",
+    "ami_name": "mariadb-{{isotime \"20060102150405\"}}",
+    "run_tags": {
+      "Name": "packer-builder-mariadb"
+    }
+  }],
+  "provisioners": [
+    {
+      "type": "ansible",
+      "user": "ec2-user",
+      "playbook_file": "./ansible/playbook.yml",
+      "extra_arguments": [
+        "-b",
+        "--ssh-extra-args",
+        "-o IdentitiesOnly=yes"
+      ]
+    }
+  ]
+}

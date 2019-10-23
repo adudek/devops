@@ -1,0 +1,62 @@
+version: "3.7"
+
+services:
+  mariadb-master:
+    image: local/mariadb-master
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: master
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_REPLICATION_USER=repl
+      - MYSQL_REPLICATION_PASSWORD=repl
+    networks:
+      net:
+        aliases:
+          - mariadb-master
+          - mysqlmaster
+
+  mariadb-slave:
+    image: local/mariadb-slave
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: slave
+    depends_on:
+      - mariadb-master
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_REPLICATION_USER=repl
+      - MYSQL_REPLICATION_PASSWORD=repl
+    networks:
+      net:
+        aliases:
+          - mariadb-master
+          - mysqlslave
+
+  mariadb-orchestrator:
+    image: local/mariadb-orchestrator
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: orchestrator
+    depends_on:
+      - mariadb-master
+      - mariadb-slave
+    environment:
+      - MYSQL_SLAVE_PASSWORD=root
+      - MYSQL_MASTER_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_REPLICATION_USER=repl
+      - MYSQL_REPLICATION_PASSWORD=repl
+    command: /bin/bash -eux ./orchestrator.sh
+    networks:
+      net:
+        aliases:
+          - mariadb-orchestrator
+
+networks:
+  net:

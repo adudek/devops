@@ -1,0 +1,32 @@
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - mariadb-server
+      - mariadb
+      - awslogs
+      - traceroute
+      - nmap-ncat
+      - aws-cli
+      - jq
+
+- name: Copy mysql.cnf files
+  copy:
+    src=../config
+    dest=/etc/my.cnf.d
+    mode=0755
+
+- name: Enable awslogs service
+  service:
+    name: awslogsd
+    enabled: yes
+
+- name: Enable replication hearbeat
+  cron:
+    name: "Heartbeat"
+    special_time: reboot
+    job: "/bin/bash -u /etc/my.cnf.d/config/heartbeat.sh"
+    user: ec2-user
